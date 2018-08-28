@@ -49,7 +49,6 @@ module.exports = class ScheduleTask {
   processTransfer(txData, callback){
     if (converter.isZero(txData.value)) {
       // transfer token
-      console.log("++++++++++++++++++++transfer token")
       this.EthereumService.callMultiNode('exactTransferData', txData.input)
       .then(transferData => {
         const tokenSymbol = this.MappedTokens[txData.to.toLowerCase()]
@@ -128,7 +127,7 @@ module.exports = class ScheduleTask {
 
       const now = new Date().getTime()
       if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: 'lost'})
-      else return callback(null, {peding: true})
+      else return callback(null, {pending: true})
     }
 
     const blockRange = converter.minusBig(results.currentBlock, results.confirm.blockNumber)
@@ -145,6 +144,7 @@ module.exports = class ScheduleTask {
       })
     } else {
       return callback(null, {
+        hash: tx.hash,
         data: results.confirm,
         confirmBlock: blockRange,
         status: txStatus,
