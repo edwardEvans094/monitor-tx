@@ -1,6 +1,6 @@
 const DEFAULT_EXPRESION = "* * * * *";  //  every minute
 const DEFAULT_BLOCK_CONFIRM = 5;
-const DEFAULT_TIMEDOUT = 2 * 60 * 1000 ///15 MINS
+const DEFAULT_TIMEDOUT = 15 * 60 * 1000 ///15 MINS
 const DEFAULT_NODE = ['https://ropsten.infura.io']
 const DEFAULT_NETWORK = 'ropsten' // mainnet/ropsten/kovan
 const DEFAULT_GET_RECEIPT = false

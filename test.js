@@ -11,12 +11,12 @@ monitorTx.init({
     //   }
     // },
     { /// trade
-      hash: "0xe763ffe95d02e231f1d7450a0848b588447c8bf604953077fefc1eef32342343",
+      hash: "0xe763ffe95d02e231f1d7450a0848b588447c8bf604953077fefc1eef369e901e",
       callback: (err, txData) => {
         console.log("_____________-callback", err, txData)
       },
       finishCallback: (err, txData) => {
-        console.log("______________finishCallback", err, txData)
+        console.log("_____________-finishCallback", err, txData)
       }
     }
 

@@ -41,11 +41,19 @@ const init = (config) => {
   });
 }
 
-const addTx = (txConfig, callback, finishCallback) => {
+const addTx = (txConfig) => {
   // add tx to array txs to check status
   // with config
   // hash:
-  // block confirm
+  // blockConfirm
+  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(tx.hash.toLowerCase())
+  if(indexDel >= 0) console.log("tx already exist")
+  else {
+    txs.push(txConfig)
+  }
+  // callback
+  // finishCallback
+
   
   
   // callback return [tx data, current block confirm] when current < blockConfirm
@@ -55,6 +63,11 @@ const addTx = (txConfig, callback, finishCallback) => {
 
 const removeTx = (hash) => {
   //remove tx with hash from array
+  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(hash.toLowerCase())
+  if(indexDel < 0) console.log("Cannot index delete tx")
+  else {
+    txs.splice(indexDel, 1)
+  }
 }
 
 module.exports = {
