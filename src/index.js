@@ -31,6 +31,7 @@ const init = (config) => {
   var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout)
 
   cron.schedule(expression, () => {
+    console.log("chedule task", txs)
     scheduleTask.exec(txs, (tx) => {
       const indexDel = txs.map(t => t.hash).indexOf(tx.hash)
       if(indexDel < 0) console.log("Cannot index delete tx")
@@ -46,9 +47,10 @@ const addTx = (txConfig) => {
   // with config
   // hash:
   // blockConfirm
-  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(tx.hash.toLowerCase())
+  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(txConfig.hash.toLowerCase())
   if(indexDel >= 0) console.log("tx already exist")
   else {
+    Object.assign(txConfig, {timeStamp: new Date().getTime()})
     txs.push(txConfig)
   }
   // callback

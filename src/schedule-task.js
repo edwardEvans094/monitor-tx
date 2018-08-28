@@ -49,6 +49,7 @@ module.exports = class ScheduleTask {
   processTransfer(txData, callback){
     if (converter.isZero(txData.value)) {
       // transfer token
+      console.log("++++++++++++++++++++transfer token")
       this.EthereumService.callMultiNode('exactTransferData', txData.input)
       .then(transferData => {
         const tokenSymbol = this.MappedTokens[txData.to.toLowerCase()]
@@ -99,14 +100,11 @@ module.exports = class ScheduleTask {
   }
 
   getConfirmData(hash, callback){
-    this.EthereumService.callMultiNode('getTx', hash).then(txData => {
-
+    this.EthereumService.callMultiNode('getTx', hash)
+    .then(txData => {
       if (txData.to.toLowerCase() == this.BlockchainInfo.network.toLowerCase()) {
-        console.log("+++++++++++ swap")
         return this.processTrade(txData, callback)
-        
       } else {
-        console.log("+++++++++_____________ transfer")
         return this.processTransfer(txData, callback)
       }
 
@@ -135,19 +133,21 @@ module.exports = class ScheduleTask {
 
     const blockRange = converter.minusBig(results.currentBlock, results.confirm.blockNumber)
     const confirmBlock = tx.confirmBlock || this.globalBlockConfirm
-
+    const txStatus = results.receipt.status ? 'success' : 'fail'
     if(blockRange > confirmBlock){
       //todo push finish callback
       // clear tx from array
       return finishCallback(null, {
         data: results.confirm,
         confirmBlock: blockRange,
+        status: txStatus,
         ...(this.getReceipt && {receipt: results.receipt})
       })
     } else {
       return callback(null, {
         data: results.confirm,
-        confirmBlock: blockRange
+        confirmBlock: blockRange,
+        status: txStatus,
       })
     }
   });

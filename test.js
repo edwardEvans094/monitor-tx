@@ -22,3 +22,15 @@ monitorTx.init({
 
   ]
 })
+
+// setTimeout(() => {
+//   monitorTx.addTx({
+//     hash: "0xd910078d3c2630acfdf15c0f72b09d0808639fc234c5323ea6fe054e9444f90525d",
+//     callback: (err, txData) => {
+//       console.log("++++++++++++++++++++++++=callback", err, txData )
+//     },
+//     finishCallback: (err, txData) => {
+//       console.log("++++++++++++++++++++++++=finishCallback", err, txData )
+//     }
+//   })
+// }, 5000)
