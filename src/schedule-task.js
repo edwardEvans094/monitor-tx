@@ -156,12 +156,17 @@ module.exports = class ScheduleTask {
 
 
   exec(txs, clearCallback) {
-    txs.map(tx => {
-      this.processTx(tx, tx['callback'], (finalErr, finalResult) => {
-        tx['finishCallback'](finalErr, finalResult);
-        return clearCallback(tx)
+    try {
+      txs.map(tx => {
+        this.processTx(tx, tx['callback'], (finalErr, finalResult) => {
+          tx['finishCallback'](finalErr, finalResult);
+          return clearCallback(tx)
+        })
       })
-    })
+    } catch (error) {
+      console.log("!!!!!!!!Error: ", error)
+    }
+    
   }
 
 
