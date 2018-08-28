@@ -127,7 +127,7 @@ module.exports = class ScheduleTask {
       /// handle tx pending or lost
 
       const now = new Date().getTime()
-      if(now - tx.timeStamp > this.lostTimeout) return finishCallback("Transaction lost")
+      if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: 'lost'})
       else return callback(null, {peding: true})
     }
 
