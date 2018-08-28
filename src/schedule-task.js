@@ -75,7 +75,7 @@ module.exports = class ScheduleTask {
         blockNumber: txData.blockNumber,
         from: txData.from,
         to: txData.to,
-        amount: txData.value,
+        amount: converter.toToken(txData.value, this.BlockchainInfo.tokens["ETH"].decimals),
         tokenSymbol: "ETH",
         tokenName: this.BlockchainInfo.tokens["ETH"].name
         // rate ?

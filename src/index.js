@@ -31,7 +31,6 @@ const init = (config) => {
   var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout)
 
   cron.schedule(expression, () => {
-    console.log("chedule task", txs)
     scheduleTask.exec(txs, (tx) => {
       const indexDel = txs.map(t => t.hash).indexOf(tx.hash)
       if(indexDel < 0) console.log("Cannot index delete tx")
