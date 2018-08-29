@@ -49,6 +49,7 @@ module.exports = class ScheduleTask {
           const amount = converter.toToken(tradeExtractData.actualDestAmount, this.BlockchainInfo.tokens[tokenSymbol].decimals)
 
           return callback(null, {
+            type: 'trade',
             blockNumber: txData.blockNumber,
             from: txData.from,
             to: tradeData.destAddress,
@@ -84,6 +85,7 @@ module.exports = class ScheduleTask {
         const amount = converter.toToken(transferData._value, this.BlockchainInfo.tokens[tokenSymbol].decimals)
 
         return callback(null, {
+          type: 'transfer',
           blockNumber: txData.blockNumber,
           from: txData.from,
           to: transferData._to,
@@ -98,6 +100,7 @@ module.exports = class ScheduleTask {
     } else {
       // transfer ether
       return callback(null, {
+        type: 'transfer',
         blockNumber: txData.blockNumber,
         from: txData.from,
         to: txData.to,
@@ -143,35 +146,35 @@ module.exports = class ScheduleTask {
       receipt: asyncCallback => this.getTransactionReceipt(tx.hash, asyncCallback),
       currentBlock: asyncCallback => this.getCurrentBlock(asyncCallback),
       confirm: ['receipt', (results, asyncCallback) => this.getConfirmData(tx.hash, results.receipt, asyncCallback)]
-  }, (err, results) => {
-    if(err) {
-      /// handle tx pending or lost
-      const now = new Date().getTime()
-      if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: 'lost'})
-      else return callback(null, {pending: true})
-    }
+    }, (err, results) => {
+      if(err) {
+        /// handle tx pending or lost
+        const now = new Date().getTime()
+        if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: 'lost'})
+        else return callback(null, {pending: true})
+      }
 
-    const blockRange = converter.minusBig(results.currentBlock, results.confirm.blockNumber)
-    const confirmBlock = tx.confirmBlock || this.globalBlockConfirm
-    const txStatus = results.receipt.status ? 'success' : 'fail'
-    if(blockRange > confirmBlock){
-      //todo push finish callback
-      // clear tx from array
-      return finishCallback(null, {
-        hash: tx.hash,
-        data: results.confirm,
-        confirmBlock: blockRange,
-        status: txStatus,
-        ...(this.getReceipt && {receipt: results.receipt})
-      })
-    } else {
-      return callback(null, {
-        hash: tx.hash,
-        data: results.confirm,
-        confirmBlock: blockRange,
-        status: txStatus,
-      })
-    }
+      const blockRange = converter.minusBig(results.currentBlock, results.confirm.blockNumber)
+      const confirmBlock = tx.confirmBlock || this.globalBlockConfirm
+      const txStatus = results.receipt.status ? 'success' : 'fail'
+      if(blockRange > confirmBlock){
+        //todo push finish callback
+        // clear tx from array
+        return finishCallback(null, {
+          hash: tx.hash,
+          data: results.confirm,
+          confirmBlock: blockRange,
+          status: txStatus,
+          ...(this.getReceipt && {receipt: results.receipt})
+        })
+      } else {
+        return callback(null, {
+          hash: tx.hash,
+          data: results.confirm,
+          confirmBlock: blockRange,
+          status: txStatus,
+        })
+      }
   });
 }
 

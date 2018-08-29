@@ -1,6 +1,6 @@
 {
   "name": "monitor-tx",
-  "version": "1.0.3-beta.41",
+  "version": "1.0.3-beta.45",
   "description": "schedule task monitor ethereum tx status",
   "main": "src/index.js",
   "scripts": {
