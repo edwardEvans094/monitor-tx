@@ -52,7 +52,9 @@ module.exports = {
   minusBig(minuend, subtrahend){
     let bigMinuend = minuend ? new BigNumber(minuend) : new BigNumber(0)
     let bigSubtrahend = subtrahend ? new BigNumber(subtrahend) : new BigNumber(0)
-    return bigMinuend.minus(bigSubtrahend).toString()
+    let bigMinus = bigMinuend.minus(bigSubtrahend)
+    if(bigMinus.isNegative()) return '0'
+    else return bigMinus.toString()
   }
 
 }

@@ -9,7 +9,8 @@ var txs = []
 
 const init = (config) => {
   //todo init task schedule with params
-  // node: array { url, prune, }
+  // nodes: array { url, prune, }
+  // network
   // default block confirm
   // default lost timeout
   // dafault interval time

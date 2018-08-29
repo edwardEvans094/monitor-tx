@@ -89,6 +89,34 @@ module.exports = class BaseProvider {
     })
   }
 
+  exactExecuteTradeData(data) {
+    return new Promise((resolve, reject) => {
+      try {
+        var dataMapped = this.rpc.eth.abi.decodeParameters([
+          {
+            type: 'address',
+            name: 'src'
+          },
+          {
+            type: 'address',
+            name: 'dest'
+          },
+          {
+            type: 'uint256',
+            name: 'actualSrcAmount'
+          },
+          {
+            type: 'uint256',
+            name: 'actualDestAmount'
+          }
+      ], data)
+        resolve(dataMapped)
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
+
 
 
 }
