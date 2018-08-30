@@ -1,13 +1,6 @@
 module.exports = class persit {
-  constructor(){
+  constructor(path){
 
   }
 
-  get(){
-
-  }
-
-  set(){
-    
-  }
 }

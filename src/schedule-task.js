@@ -11,22 +11,18 @@ const async = require("async")
 
 
 module.exports = class ScheduleTask {
-  constructor(
-    ethService, 
-    network, 
-    getReceipt, 
-    globalBlockConfirm, 
-    lostTimeout,
-    maxProcessTxs
-  ) {
-    this.EthereumService = ethService
-    this.network = network
+  constructor(props) {
+    this.EthereumService = props.ethereumService
+    this.network = props.network
     this.BlockchainInfo = loadEnv(this.network)
     this.MappedTokens = converter.mapAddress(this.BlockchainInfo.tokens)
-    this.getReceipt = getReceipt
-    this.globalBlockConfirm = globalBlockConfirm
-    this.lostTimeout = lostTimeout
-    this.maxProcessTxs = maxProcessTxs
+    this.getReceipt = props.getReceipt
+    this.globalBlockConfirm = props.globalBlockConfirm
+    this.lostTimeout = props.lostTimeout
+    this.maxProcessTxs = props.maxProcessTxs
+
+    this.mineCallback = props.mineCallback
+    this.confirmCallback = props.confirmCallback
   }
 
   processTrade(txData, receipt, callback){
@@ -185,8 +181,8 @@ module.exports = class ScheduleTask {
   exec(txs, clearCallback) {
     try {
       async.eachLimit(txs, this.maxProcessTxs, (tx, asyncCallback) => {
-        this.processTx(tx, tx['mineCallback'], (finalErr, finalResult) => {
-          tx['confirmCallback'](finalErr, finalResult);
+        this.processTx(tx, this.mineCallback, (finalErr, finalResult) => {
+          this.confirmCallback(finalErr, finalResult);
           clearCallback(tx)
           return asyncCallback()
         })

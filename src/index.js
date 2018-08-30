@@ -4,7 +4,9 @@ const cron = require('node-cron');
 const CONSTANTS = require('./constant')
 const ScheduleTask = require('./schedule-task')
 const EthereumService = require('./ethereum/ethereum')
-var txs = []
+// var txs = []
+
+const Txs = require('./persit/sqlite.storage')
 
 
 const init = (config) => {
@@ -15,6 +17,9 @@ const init = (config) => {
   // default lost timeout
   // dafault interval time
   // txs 
+
+  // confirmCallback
+  // mineCallback
   var expression = config.expression || CONSTANTS.DEFAULT_EXPRESION
   if(config.txs){
     txs = config.txs
@@ -28,9 +33,25 @@ const init = (config) => {
   var globalBlockConfirm = config.blockConfirm || CONSTANTS.DEFAULT_BLOCK_CONFIRM
   var lostTimeout = (config.lostTimeout || CONSTANTS.DEFAULT_TIMEDOUT) * 1000
   var maxProcessTxs = config.maxProcessTxs || CONSTANTS.DEFAULT_MAX_PROCESS_TXS
+  var mineCallback = config.mineCallback
+  var confirmCallback = config.confirmCallback
+  var sqlPath = config.sqlPath || CONSTANTS.DEFAULT_SQL_PATH
+
+  this.txs = new Txs(sqlPath)
+  this.txs.initDb()
 
   var ethereumService = new EthereumService(arrayNodes)
-  var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout, maxProcessTxs)
+  const params = {
+    ethereumService, 
+    network, 
+    getReceipt, 
+    globalBlockConfirm, 
+    lostTimeout, 
+    maxProcessTxs,
+    mineCallback,
+    confirmCallback
+  }
+  var scheduleTask = new ScheduleTask(params)
 
   cron.schedule(expression, () => {
     scheduleTask.exec(txs, (tx) => {
