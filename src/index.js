@@ -21,12 +21,12 @@ const init = (config) => {
   // confirmCallback
   // mineCallback
   var expression = config.expression || CONSTANTS.DEFAULT_EXPRESION
-  if(config.txs){
-    txs = config.txs
-    txs = txs.map(tx => Object.assign(tx, {
-      timeStamp: new Date().getTime()
-    }))
-  }
+  // if(config.txs){
+  //   txs = config.txs
+  //   txs = txs.map(tx => Object.assign(tx, {
+  //     timeStamp: new Date().getTime()
+  //   }))
+  // }
   var arrayNodes = config.nodes || CONSTANTS.DEFAULT_NODE
   var network = config.network || CONSTANTS.DEFAULT_NETWORK
   var getReceipt = config.includeReceipt || CONSTANTS.DEFAULT_GET_RECEIPT
@@ -38,30 +38,52 @@ const init = (config) => {
   var sqlPath = config.sqlPath || CONSTANTS.DEFAULT_SQL_PATH
 
   this.txs = new Txs(sqlPath)
-  this.txs.initDb()
+  this.txs.initDb((err, result) => {
+    if(err) return console.log(err)
 
-  var ethereumService = new EthereumService(arrayNodes)
-  const params = {
-    ethereumService, 
-    network, 
-    getReceipt, 
-    globalBlockConfirm, 
-    lostTimeout, 
-    maxProcessTxs,
-    mineCallback,
-    confirmCallback
-  }
-  var scheduleTask = new ScheduleTask(params)
+    var ethereumService = new EthereumService(arrayNodes)
+    const params = {
+      ethereumService, 
+      network, 
+      getReceipt, 
+      globalBlockConfirm, 
+      lostTimeout, 
+      maxProcessTxs,
+      mineCallback,
+      confirmCallback
+    }
+    var scheduleTask = new ScheduleTask(params)
 
-  cron.schedule(expression, () => {
-    scheduleTask.exec(txs, (tx) => {
-      const indexDel = txs.map(t => t.hash).indexOf(tx.hash)
-      if(indexDel < 0) console.log("Cannot index delete tx")
-      else {
-        txs.splice(indexDel, 1)
-      }
-    })
-  });
+    this.txs.updatetimeStampTxs()
+
+    cron.schedule(expression, () => {
+
+      this.txs.getAll( (err, txs) => {
+        if(err) return
+
+
+        scheduleTask.exec(txs, (tx) => {
+          const indexDel = txs.map(t => t.hash).indexOf(tx.hash)
+          if(indexDel < 0) console.log("Cannot index delete tx")
+          else {
+            // txs.splice(indexDel, 1)
+            // this.txs.removeTx(tx.hash, (er, result) => console.log(err))
+
+
+            removeTx(tx.hash)
+          }
+        })
+      })
+
+      
+
+
+    });
+
+
+  })
+
+  
 }
 
 const addTx = (txConfig) => {
@@ -69,14 +91,26 @@ const addTx = (txConfig) => {
   // with config
   // hash:
   // blockConfirm
-  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(txConfig.hash.toLowerCase())
-  if(indexDel >= 0) console.log("tx already exist")
-  else {
+  this.txs.findByHash(txConfig.hash, (err, result) => {
+    console.log("______________", err, result)
+    if(err) return console.log(err)
+
+    if(result && result.length) return console.log("tx already exist!")
+
     Object.assign(txConfig, {timeStamp: new Date().getTime()})
-    txs.push(txConfig)
-  }
-  // callback
-  // finishCallback
+    // txs.push(txConfig)
+    this.txs.addTx(txConfig, (er, result) => console.log(err))
+  })
+
+  // const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(txConfig.hash.toLowerCase())
+  // if(indexDel >= 0) console.log("tx already exist")
+  // else {
+  //   Object.assign(txConfig, {timeStamp: new Date().getTime()})
+  //   // txs.push(txConfig)
+  //   this.txs.addTx(txConfig)
+  // }
+  // // callback
+  // // finishCallback
 
   
   
@@ -87,11 +121,13 @@ const addTx = (txConfig) => {
 
 const removeTx = (hash) => {
   //remove tx with hash from array
-  const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(hash.toLowerCase())
-  if(indexDel < 0) console.log("Cannot index delete tx")
-  else {
-    txs.splice(indexDel, 1)
-  }
+  // const indexDel = txs.map(t => t.hash.toLowerCase()).indexOf(hash.toLowerCase())
+  // if(indexDel < 0) console.log("Cannot index delete tx")
+  // else {
+  //   txs.splice(indexDel, 1)
+  // }
+  console.log("*********** run to remove tx", hash)
+  this.txs.removeTxByHash(hash, err => console.log(err))
 }
 
 module.exports = {

@@ -1,23 +1,24 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('sqlite3').verbose()
 
 module.exports = class SqliteStorage {
   constructor(path){
     this.db = new sqlite3.Database(path, (err) => {
       if (err) {
         console.error(err.message);
+      } else {
+        console.log('Connected to the sqlite3 database.');
       }
-      console.log('Connected to the database.sqlite3 database.');
     });
   }
 
   initDb(callback){
-    let sql = `CREATE TABLE IF NOT EXISTS txs (id INTEGER PRIMARY KEY AUTOINCREMENT, hash STRING UNIQUE, blockConfirm STRING)`
+    let sql = `CREATE TABLE IF NOT EXISTS txs (id INTEGER PRIMARY KEY AUTOINCREMENT, hash STRING UNIQUE, blockConfirm STRING, timeStamp INTEGER)`
     this.db.all(sql, [], callback)
   }
 
   findByHash(hash, callback) {
-    let sql = `SELECT * FROM txs WHERE hash = ${hash}`
-    return this.db.all(sql, [], callback)
+    let sql = `SELECT * FROM txs WHERE LOWER(hash) = ?`
+    return this.db.all(sql, [hash.toLowerCase()], callback)
   }
 
   getAll(callback){
@@ -25,7 +26,7 @@ module.exports = class SqliteStorage {
     return this.db.all(sql, [], callback)
   }
 
-  addTx(tx, callback){
+  addTx(data, callback){
     let columns = Object.keys(data).join(',')
     let columns_mask = new Array(Object.keys(data).length + 1).join('?').split('').join(',')
 
@@ -37,8 +38,13 @@ module.exports = class SqliteStorage {
   }
 
   removeTxByHash(hash, callback){
-    let sql = `DELETE FROM txs WHERE LOWER(hash) = LOWER(${hash})`
-    return this.db.all(sql, [], callback)
+    let sql = `DELETE FROM txs WHERE LOWER(hash) = ?`
+    return this.db.all(sql, [hash.toLowerCase()], callback)
+  }
+
+  updatetimeStampTxs(callback){
+    let sql = `UPDATE txs SET timeStamp = ?`
+    this.db.run(sql, [new Date().getTime()], callback)
   }
 
 }
