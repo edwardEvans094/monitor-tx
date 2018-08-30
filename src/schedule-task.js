@@ -16,7 +16,8 @@ module.exports = class ScheduleTask {
     network, 
     getReceipt, 
     globalBlockConfirm, 
-    lostTimeout
+    lostTimeout,
+    maxProcessTxs
   ) {
     this.EthereumService = ethService
     this.network = network
@@ -25,6 +26,7 @@ module.exports = class ScheduleTask {
     this.getReceipt = getReceipt
     this.globalBlockConfirm = globalBlockConfirm
     this.lostTimeout = lostTimeout
+    this.maxProcessTxs = maxProcessTxs
   }
 
   processTrade(txData, receipt, callback){
@@ -182,11 +184,14 @@ module.exports = class ScheduleTask {
 
   exec(txs, clearCallback) {
     try {
-      txs.map(tx => {
+      async.eachLimit(txs, this.maxProcessTxs, (tx, asyncCallback) => {
         this.processTx(tx, tx['mineCallback'], (finalErr, finalResult) => {
           tx['confirmCallback'](finalErr, finalResult);
-          return clearCallback(tx)
+          clearCallback(tx)
+          return asyncCallback()
         })
+      }, err => {
+        console.log(err)
       })
     } catch (error) {
       console.log("!!!!!!!!Error: ", error)

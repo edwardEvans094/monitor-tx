@@ -27,9 +27,10 @@ const init = (config) => {
   var getReceipt = config.includeReceipt || CONSTANTS.DEFAULT_GET_RECEIPT
   var globalBlockConfirm = config.blockConfirm || CONSTANTS.DEFAULT_BLOCK_CONFIRM
   var lostTimeout = (config.lostTimeout || CONSTANTS.DEFAULT_TIMEDOUT) * 1000
+  var maxProcessTxs = config.maxProcessTxs || CONSTANTS.DEFAULT_MAX_PROCESS_TXS
 
   var ethereumService = new EthereumService(arrayNodes)
-  var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout)
+  var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout, maxProcessTxs)
 
   cron.schedule(expression, () => {
     scheduleTask.exec(txs, (tx) => {
