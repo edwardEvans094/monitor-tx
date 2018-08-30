@@ -5,10 +5,10 @@ monitorTx.init({
   txs: [
     { /// transfer
       hash: "0xd910078d3c2630acfdf15c0f72b0439d0808639fcc5323ea6fe054e9444f90525d",
-      callback: (err, txData) => {
+      mineCallback: (err, txData) => {
         console.log("_____________-callback", err, txData)
       },
-      finishCallback: (err, txData) => {
+      confirmCallback: (err, txData) => {
         console.log("_____________-finishCallback", err, txData)
       }
     },

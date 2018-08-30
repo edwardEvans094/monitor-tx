@@ -24,9 +24,9 @@ const init = (config) => {
   }
   var arrayNodes = config.nodes || CONSTANTS.DEFAULT_NODE
   var network = config.network || CONSTANTS.DEFAULT_NETWORK
-  var getReceipt = config.getReceipt || CONSTANTS.DEFAULT_GET_RECEIPT
+  var getReceipt = config.includeReceipt || CONSTANTS.DEFAULT_GET_RECEIPT
   var globalBlockConfirm = config.blockConfirm || CONSTANTS.DEFAULT_BLOCK_CONFIRM
-  var lostTimeout = config.lostTimeout || CONSTANTS.DEFAULT_TIMEDOUT
+  var lostTimeout = (config.lostTimeout || CONSTANTS.DEFAULT_TIMEDOUT) * 1000
 
   var ethereumService = new EthereumService(arrayNodes)
   var scheduleTask = new ScheduleTask(ethereumService, network, getReceipt, globalBlockConfirm, lostTimeout)
