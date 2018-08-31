@@ -37,6 +37,14 @@ monitorTx.addTx({
 |     mineCallback        |     Function                         |    Callback call each time cron fetched tx data, but confirm block is not enough |
 |     confirmCallback     |     Function                         |    Callback call when block confirm is enount or tx lost                         |
 
+Default value:
+  DEFAULT_EXPRESION = "*/15 * * * * *";  //  every 10s
+  DEFAULT_BLOCK_CONFIRM = 5;
+  DEFAULT_TIMEDOUT = 15 * 60            //  15 MINS
+  DEFAULT_NODE = ['https://ropsten.infura.io']
+  DEFAULT_NETWORK = 'ropsten' 
+  DEFAULT_GET_RECEIPT = false
+  DEFAULT_SQL_PATH = './src/db/txs.db'
 
 #### Cron Syntax
 
