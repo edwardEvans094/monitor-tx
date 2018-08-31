@@ -60,18 +60,8 @@ const init = (config) => {
 
       this.txs.getAll( (err, txs) => {
         if(err) return
-
-
         scheduleTask.exec(txs, (tx) => {
-          const indexDel = txs.map(t => t.hash).indexOf(tx.hash)
-          if(indexDel < 0) console.log("Cannot index delete tx")
-          else {
-            // txs.splice(indexDel, 1)
-            // this.txs.removeTx(tx.hash, (er, result) => console.log(err))
-
-
-            removeTx(tx.hash)
-          }
+          removeTx(tx.hash)
         })
       })
 
@@ -91,6 +81,8 @@ const addTx = (txConfig) => {
   // with config
   // hash:
   // blockConfirm
+  // amount
+  // symbol
   this.txs.findByHash(txConfig.hash, (err, result) => {
     console.log("______________", err, result)
     if(err) return console.log(err)

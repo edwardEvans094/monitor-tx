@@ -12,7 +12,7 @@ module.exports = class SqliteStorage {
   }
 
   initDb(callback){
-    let sql = `CREATE TABLE IF NOT EXISTS txs (id INTEGER PRIMARY KEY AUTOINCREMENT, hash STRING UNIQUE, blockConfirm STRING, timeStamp INTEGER)`
+    let sql = `CREATE TABLE IF NOT EXISTS txs (id INTEGER PRIMARY KEY AUTOINCREMENT, hash STRING UNIQUE, blockConfirm STRING, timeStamp INTEGER, amount STRING, symbol STRING)`
     this.db.all(sql, [], callback)
   }
 

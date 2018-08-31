@@ -55,6 +55,12 @@ module.exports = {
     let bigMinus = bigMinuend.minus(bigSubtrahend)
     if(bigMinus.isNegative()) return '0'
     else return bigMinus.toString()
+  },
+
+  isLower(number, base){
+    let bigNumber = number ? new BigNumber(number) : new BigNumber(0)
+    let bigBase = base ? new BigNumber(base) : new BigNumber(0)
+    return bigNumber.isLessThan(bigBase)
   }
 
 }

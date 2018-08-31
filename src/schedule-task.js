@@ -139,7 +139,6 @@ module.exports = class ScheduleTask {
   }
 
   processTx(tx, callback, finishCallback) {
-
     async.auto({
       receipt: asyncCallback => this.getTransactionReceipt(tx.hash, asyncCallback),
       currentBlock: asyncCallback => this.getCurrentBlock(asyncCallback),
@@ -154,7 +153,25 @@ module.exports = class ScheduleTask {
 
       const blockRange = converter.minusBig(results.currentBlock, results.confirm.blockNumber)
       const confirmBlock = tx.confirmBlock || this.globalBlockConfirm
-      const txStatus = results.receipt.status ? 'success' : 'fail'
+      const txStatus = results.receipt.status ? CONSTANTS.TRANSACTION_STATUS.SUCCESS : CONSTANTS.TRANSACTION_STATUS.FAIL
+
+      var confirmTransaction, transactionStatus = txStatus
+      if(tx.amount && tx.symbol){
+        if(transactionStatus == CONSTANTS.TRANSACTION_STATUS.SUCCESS){
+
+          if(converter.isLower(results.confirm.amount, tx.amount) || 
+            results.confirm.tokenSymbol !== tx.symbol.toUpperCase()){
+              transactionStatus = CONSTANTS.TRANSACTION_STATUS.NOT_ENOUGH
+          }
+
+        }
+        confirmTransaction = {
+          status: transactionStatus,
+          amount: tx.amount,
+          symbol: tx.symbol
+        }
+      }
+
       if(blockRange > confirmBlock){
         //todo push finish callback
         // clear tx from array
@@ -163,7 +180,8 @@ module.exports = class ScheduleTask {
           data: results.confirm,
           confirmBlock: blockRange,
           status: txStatus,
-          ...(this.getReceipt && {receipt: results.receipt})
+          ...(this.getReceipt && {receipt: results.receipt}),
+          ...(confirmTransaction && {confirm: confirmTransaction})
         })
       } else {
         return callback(null, {
@@ -171,6 +189,7 @@ module.exports = class ScheduleTask {
           data: results.confirm,
           confirmBlock: blockRange,
           status: txStatus,
+          ...(confirmTransaction && {confirm: confirmTransaction})
         })
       }
   });
@@ -192,7 +211,6 @@ module.exports = class ScheduleTask {
     } catch (error) {
       console.log("!!!!!!!!Error: ", error)
     }
-    
   }
 
 

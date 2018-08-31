@@ -27,7 +27,10 @@ monitorTx.init({
 })
 
 setTimeout(() => {
+  console.log("___________-add tx")
   monitorTx.addTx({
-    hash: "0xd910078d3c2630acfdf15c0f72b09d0808639fcc5323ea6fe054e9444f90525d",
+    hash: "0xe763ffe95d02e231f1d7450a0848b588447c8bf604953077fefc1eef369e901e",
+    amount: '0.7653',
+    symbol: 'KNC'
   })
 }, 5000)
