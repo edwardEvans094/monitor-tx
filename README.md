@@ -33,6 +33,7 @@ monitorTx.addTx({
 |     blockConfirm        |     Number                           |    Number of block confirm                                                       |
 |     lostTimeout         |     Number(second)                   |    Time to check transaction is lost                                             |
 |     includeReceipt      |     Bolean                           |    Is include receipt to confirmCallback data                                    |
+|     sqlPath             |     String                           |    Path to sqlite db                                                             |
 |     mineCallback        |     Function                         |    Callback call each time cron fetched tx data, but confirm block is not enough |
 |     confirmCallback     |     Function                         |    Callback call when block confirm is enount or tx lost                         |
 
@@ -95,6 +96,12 @@ cron.schedule('*/2 * * * *', function(){
   status: 'success',
   confirm: { status: 'success', amount: 0.7653, symbol: 'KNC' } }
 });
+```
+
+when tx pending
+```
+err: null 
+{ pending: true }
 ```
 
 
