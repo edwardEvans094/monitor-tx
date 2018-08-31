@@ -9,6 +9,8 @@ const TRADE_TOPPIC = "0x1849bd6a030a1bca28b83437fd3de96f3d27a5d172fa7e9c78e7b614
 const DEFAULT_SQL_PATH = './src/db/txs.db'
 const TRANSACTION_STATUS = {
   SUCCESS: 'success',
+  PENDING: 'pending',
+  LOST: 'lost',
   NOT_ENOUGH: 'not enough',
   FAIL: 'fail'
 }

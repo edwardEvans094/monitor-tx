@@ -147,7 +147,7 @@ module.exports = class ScheduleTask {
       if(err) {
         /// handle tx pending or lost
         const now = new Date().getTime()
-        if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: 'lost'})
+        if(now - tx.timeStamp > this.lostTimeout) return finishCallback(null, { status: CONSTANTS.TRANSACTION_STATUS.LOST})
         else return callback(null, {pending: true})
       }
 
@@ -181,7 +181,7 @@ module.exports = class ScheduleTask {
           confirmBlock: blockRange,
           status: txStatus,
           ...(this.getReceipt && {receipt: results.receipt}),
-          ...(confirmTransaction && {confirm: confirmTransaction})
+          ...(confirmTransaction && {confirmTransaction: confirmTransaction})
         })
       } else {
         return callback(null, {
@@ -189,7 +189,7 @@ module.exports = class ScheduleTask {
           data: results.confirm,
           confirmBlock: blockRange,
           status: txStatus,
-          ...(confirmTransaction && {confirm: confirmTransaction})
+          ...(confirmTransaction && {confirmTransaction: confirmTransaction})
         })
       }
   });
